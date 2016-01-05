@@ -58,7 +58,7 @@ class Receiver(object):
             else:
                 self._imap_hanlde = imaplib.IMAP4(const.IMAP_ADDRESS, const.IMAP_POR)
             self._imap_hanlde.login(const.IMAP_USER_NAME, const.IMAP_PASSWORD)
-            logging.info("login success")
+            logging.info("login IMAP server success")
             return True
         except Exception as e:
             logging.error(e)

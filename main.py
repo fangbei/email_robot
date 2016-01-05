@@ -5,7 +5,9 @@ import time
 import shutil
 import config
 import logging
+import message
 from receiver import Receiver
+from transmitter import Transmitter
 
 def InitLogging():
     if os.path.exists("logs"):
@@ -28,8 +30,13 @@ def InitLogging():
     console.setFormatter(formatter)
     logging.getLogger('').addHandler(console)
 
+class A(object):
+    def print(self):
+        print("A")
+
+class B(object):
+    def print(self):
+        print("B")
+
 if __name__ == '__main__':
     InitLogging()
-    re = Receiver()
-    re.connect()
-    re.run()
