@@ -5,16 +5,16 @@ import queue
 import email
 import const
 import smtplib
-import logging
 import message
+import logging
 from email.header import Header
 from email.mime.text import MIMEText
 
 class Transmitter(object):
     def __init__(self):
+        super(Transmitter, self).__init__()
         self._finished = False
         self._queue = queue.Queue()
-        super(Transmitter, self).__init__()
 
     def _connect(self):
         count = 0
@@ -56,25 +56,25 @@ class Transmitter(object):
                     logging.error(e)
             smtp_hanlde.close()
 
-    def push(self, msg):
-        assert(isinstance(msg, message.Message))
-        if isinstance(msg, message.Message):
-            self._queue.put(msg)
-
-    def fetch(self):
+    def _fetch(self):
         try:
             return self._queue.get(block=False)
         except Exception as e:
             return None
 
+    def push(self, msg):
+        assert(isinstance(msg, message.Message))
+        if isinstance(msg, message.Message):
+            self._queue.put(msg)
+
     def run(self):
-        logging.info("start sending emails")
+        logging.info("start send emails")
         while not self._finished:
             msglist = []
-            msg = self.fetch()
+            msg = self._fetch()
             while msg != None:
                 msglist.append(msg)
-                msg = self.fetch()
+                msg = self._fetch()
             if len(msglist) > 0:
                 self._send(msglist)
             else:
@@ -83,4 +83,4 @@ class Transmitter(object):
     def stop(self):
         assert(self._finshed == False)
         self._finished = True
-        logging.info("stop sending emails")
+        logging.info("stop send emails")

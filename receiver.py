@@ -5,15 +5,15 @@ import const
 import email
 import queue
 import imaplib
-import logging
 import message
+import logging
 
 class Receiver(object):
     def __init__(self):
+        super(Receiver, self).__init__()
         self._finshed = False
         self._imap_hanlde = None
         self._queue = queue.Queue()
-        super(Receiver, self).__init__()
 
     def _receive(self):
         assert(self._imap_hanlde != None and not self._finshed)
@@ -78,7 +78,7 @@ class Receiver(object):
                 pass
 
     def run(self):
-        logging.info("start receiving emails")
+        logging.info("start receive emails")
         while self._imap_hanlde != None and not self._finshed:
             try:
                 self._receive()
@@ -90,4 +90,4 @@ class Receiver(object):
     def stop(self):
         assert(self._finshed == False)
         self._finshed = True
-        logging.info("stop receiving emails")
+        logging.info("stop receive emails")

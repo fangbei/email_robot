@@ -30,13 +30,5 @@ def InitLogging():
     console.setFormatter(formatter)
     logging.getLogger('').addHandler(console)
 
-class A(object):
-    def print(self):
-        print("A")
-
-class B(object):
-    def print(self):
-        print("B")
-
 if __name__ == '__main__':
     InitLogging()
