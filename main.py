@@ -4,7 +4,6 @@ import os
 import time
 import shutil
 import config
-import message
 import logging
 from handler import Handler
 from receiver import Receiver
@@ -31,12 +30,27 @@ def InitLogging():
     console.setFormatter(formatter)
     logging.getLogger('').addHandler(console)
 
-import re
-
 if __name__ == '__main__':
     InitLogging()
     handler = Handler()
     receiver = Receiver()
-    receiver.connect()
     transmitter = Transmitter()
+    receiver.connect()
 
+    # main loop
+    while True:
+        if handler.is_runing() and receiver.is_runing() and transmitter.is_runing():
+            msg = receiver.fetch()
+            while msg != None:
+                handler.push(msg)
+                msg = receiver.fetch()
+            msg = handler.fetch_to_send()
+            while msg != None:
+                transmitter.push(msg)
+                msg = handler.fetch_to_send()
+        else:
+            break
+
+    handler.stop()
+    receiver.stop()
+    transmitter.stop()

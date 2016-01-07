@@ -10,9 +10,9 @@ import handle.echo as echo
 class Handler(object):
     def __init__(self):
         super(Handler, self).__init__()
-        self._finished = False
+        self._finshed = True
         self._queue = queue.Queue()
-        self._result_queue = queue.Queue()
+        self._to_send_queue = queue.Queue()
         self._handler = {"echo" : echo.Echo()}
 
     def _fetch(self):
@@ -37,20 +37,27 @@ class Handler(object):
                 if handle != None:
                     result = handle.handler(struct)
                     if result != None:
-                        self._result_queue.put(message.Message(msg.address(), result))
+                        self._to_send_queue.put(message.Message(msg.address(), result))
                 else:
-                    self._result_queue.put(message.Message(msg.address(), u"无法识别的命令"))
+                    self._to_send_queue.put(message.Message(msg.address(), u"无法识别的命令"))
             else:
-                self._result_queue.put(message.Message(msg.address(), u"非法的命令格式"))
+                self._to_send_queue.put(message.Message(msg.address(), u"非法的命令格式"))
 
     def push(self, msg):
         assert(isinstance(msg, message.Message))
         if isinstance(msg, message.Message):
             self._queue.put(msg)
 
+    def fetch_to_send(self):
+        try:
+            return self._to_send_queue.get(block=False)
+        except Exception as e:
+            return None
+
     def run(self):
+        self._finshed = False
         logging.info("start handle emails")
-        while not self._finished:
+        while not self._finshed:
             msglist = []
             msg = self._fetch()
             while msg != None:
@@ -62,6 +69,9 @@ class Handler(object):
                 time.sleep(1)
 
     def stop(self):
-        assert(self._finshed == False)
-        self._finished = True
-        logging.info("stop handle emails")
+        if self._finshed == False:
+            self._finshed = True
+            logging.info("stop handle emails")
+
+    def is_runing(self):
+        return self._finshed == False

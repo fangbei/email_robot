@@ -13,7 +13,7 @@ from email.mime.text import MIMEText
 class Transmitter(object):
     def __init__(self):
         super(Transmitter, self).__init__()
-        self._finished = False
+        self._finshed = True
         self._queue = queue.Queue()
 
     def _connect(self):
@@ -68,8 +68,9 @@ class Transmitter(object):
             self._queue.put(msg)
 
     def run(self):
+        self._finshed = False
         logging.info("start send emails")
-        while not self._finished:
+        while not self._finshed:
             msglist = []
             msg = self._fetch()
             while msg != None:
@@ -81,6 +82,9 @@ class Transmitter(object):
                 time.sleep(1)
 
     def stop(self):
-        assert(self._finshed == False)
-        self._finished = True
-        logging.info("stop send emails")
+        if self._finshed == False:
+            self._finshed = True
+            logging.info("stop send emails")
+
+    def is_runing(self):
+        return self._finshed == False

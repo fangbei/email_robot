@@ -11,7 +11,7 @@ import logging
 class Receiver(object):
     def __init__(self):
         super(Receiver, self).__init__()
-        self._finshed = False
+        self._finshed = True
         self._imap_hanlde = None
         self._queue = queue.Queue()
 
@@ -78,6 +78,7 @@ class Receiver(object):
                 pass
 
     def run(self):
+        self._finshed = False
         logging.info("start receive emails")
         while self._imap_hanlde != None and not self._finshed:
             try:
@@ -88,6 +89,9 @@ class Receiver(object):
         self.close()
 
     def stop(self):
-        assert(self._finshed == False)
-        self._finshed = True
-        logging.info("stop receive emails")
+        if self._finshed == False:
+            self._finshed = True
+            logging.info("stop receive emails")
+
+    def is_runing(self):
+        return self._finshed == False
