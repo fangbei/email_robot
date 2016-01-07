@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
 
+import re
 import time
 import queue
 import message
 import logging
-import handler.echo as echo
+import handle.echo as echo
 
 class Handler(object):
     def __init__(self):
         super(Handler, self).__init__()
         self._finished = False
         self._queue = queue.Queue()
+        self._result_queue = queue.Queue()
         self._handler = {"echo" : echo.Echo()}
 
     def _fetch(self):
@@ -19,8 +21,27 @@ class Handler(object):
         except Exception as e:
             return None
 
+    def _unpack(self, pack):
+        assert(isinstance(pack, str))
+        if (isinstance(pack, str)):
+            r = re.match("^(\w+)\s*:\s*((\w|\n)+)$", pack)
+            if r != None:
+                return r.group(1), r.group(2)
+        return None, None
+
     def _handle(self, msglist):
-        pass
+        for msg in msglist:
+            code, struct = self._unpack(msg.content())
+            if code != None and struct != None:
+                handle = self._handler.get(code)
+                if handle != None:
+                    result = handle.handler(struct)
+                    if result != None:
+                        self._result_queue.put(message.Message(msg.address(), result))
+                else:
+                    self._result_queue.put(message.Message(msg.address(), u"无法识别的命令"))
+            else:
+                self._result_queue.put(message.Message(msg.address(), u"非法的命令格式"))
 
     def push(self, msg):
         assert(isinstance(msg, message.Message))

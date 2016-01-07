@@ -4,8 +4,9 @@ import os
 import time
 import shutil
 import config
-import logging
 import message
+import logging
+from handler import Handler
 from receiver import Receiver
 from transmitter import Transmitter
 
@@ -30,5 +31,12 @@ def InitLogging():
     console.setFormatter(formatter)
     logging.getLogger('').addHandler(console)
 
+import re
+
 if __name__ == '__main__':
     InitLogging()
+    handler = Handler()
+    receiver = Receiver()
+    receiver.connect()
+    transmitter = Transmitter()
+
