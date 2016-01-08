@@ -24,7 +24,7 @@ class Handler(object):
     def _unpack(self, pack):
         assert(isinstance(pack, str))
         if (isinstance(pack, str)):
-            r = re.match("^(\w+)\s*:\s*((\w|\n)+)$", pack)
+            r = re.match("^(\w+)\s*:\s*((\w|\n)+\s*)$", pack)
             if r != None:
                 return r.group(1), r.group(2)
         return None, None
@@ -39,9 +39,9 @@ class Handler(object):
                     if result != None:
                         self._to_send_queue.put(message.Message(msg.address(), result))
                 else:
-                    self._to_send_queue.put(message.Message(msg.address(), u"无法识别的命令"))
+                    self._to_send_queue.put(message.Message(msg.address(), u"无法识别的命令。"))
             else:
-                self._to_send_queue.put(message.Message(msg.address(), u"非法的命令格式"))
+                self._to_send_queue.put(message.Message(msg.address(), u"非法的命令格式。"))
 
     def push(self, msg):
         assert(isinstance(msg, message.Message))

@@ -5,6 +5,7 @@ import time
 import shutil
 import config
 import logging
+import threading
 from handler import Handler
 from receiver import Receiver
 from transmitter import Transmitter
@@ -37,6 +38,13 @@ if __name__ == '__main__':
     transmitter = Transmitter()
     receiver.connect()
 
+    td1 = threading.Thread(target=lambda : handler.run())
+    td2 = threading.Thread(target=lambda : receiver.run())
+    td3 = threading.Thread(target=lambda : transmitter.run())
+    td1.start()
+    td2.start()
+    td3.start()
+
     # main loop
     while True:
         if handler.is_runing() and receiver.is_runing() and transmitter.is_runing():
@@ -54,3 +62,7 @@ if __name__ == '__main__':
     handler.stop()
     receiver.stop()
     transmitter.stop()
+
+    td1.join()
+    td2.join()
+    td3.join()

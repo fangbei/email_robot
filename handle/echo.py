@@ -5,4 +5,4 @@ class Echo(object):
         super(Echo, self).__init__()
 
     def handler(self, struct):
-        return None
+        return struct

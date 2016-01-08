@@ -51,7 +51,7 @@ class Transmitter(object):
                 message["Message-ID"] = email.utils.make_msgid()
                 try:
                     smtp_hanlde.sendmail(const.SMTP_USER_NAME, msg.address(), message.as_string())
-                    logging.info("send success")
+                    logging.info("send email success")
                 except Exception as e:
                     logging.error(e)
             smtp_hanlde.close()
