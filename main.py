@@ -38,9 +38,9 @@ if __name__ == '__main__':
     transmitter = Transmitter()
     receiver.connect()
 
-    td1 = threading.Thread(handler.run())
-    td2 = threading.Thread(receiver.run())
-    td3 = threading.Thread(transmitter.run())
+    td1 = threading.Thread(target=handler.run)
+    td2 = threading.Thread(target=receiver.run)
+    td3 = threading.Thread(target=transmitter.run)
     td1.start()
     td2.start()
     td3.start()
