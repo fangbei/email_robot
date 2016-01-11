@@ -38,9 +38,9 @@ if __name__ == '__main__':
     transmitter = Transmitter()
     receiver.connect()
 
-    td1 = threading.Thread(target=lambda : handler.run())
-    td2 = threading.Thread(target=lambda : receiver.run())
-    td3 = threading.Thread(target=lambda : transmitter.run())
+    td1 = threading.Thread(handler.run())
+    td2 = threading.Thread(receiver.run())
+    td3 = threading.Thread(transmitter.run())
     td1.start()
     td2.start()
     td3.start()
@@ -62,7 +62,6 @@ if __name__ == '__main__':
     handler.stop()
     receiver.stop()
     transmitter.stop()
-
     td1.join()
     td2.join()
     td3.join()
